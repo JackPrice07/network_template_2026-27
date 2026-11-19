@@ -25,6 +25,7 @@ void Client::input()
 		std::getline(std::cin, str);
 		std::cin.clear();
 
+		
 		if (connected)
 		{
 			socket->send(reinterpret_cast<char*>(str.data()), str.length());

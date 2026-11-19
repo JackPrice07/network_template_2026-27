@@ -31,3 +31,19 @@ void Server::run()
 		std::cout << "Client connected @ " << c_sock.getRemotePort() << std::endl;
 	}
 }
+
+void Server::input()
+{
+	while (running)
+	{
+		std::string str;
+		std::getline(std::cin, str);
+		std::cin.clear();
+
+		std::lock_guard<std::mutex> lck(mutex);
+		for (std::unique_ptr<sf::TcpSocket>& connection : connections)
+		{
+			connection->send(reinterpret_cast<char*>(str.data()), str.length());
+		}
+	}
+}
