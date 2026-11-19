@@ -17,3 +17,50 @@ void Client::connect()
 	}
 }
 
+void Client::input()
+{
+	while (running)
+	{
+		std::string str;
+		std::getline(std::cin, str);
+		std::cin.clear();
+
+		if (connected)
+		{
+			socket->send(reinterpret_cast<char*>(str.data()), str.length());
+		}
+	}
+}
+
+void Client::run()
+{
+	running = true;
+	std::thread input_thread([&] {input();});
+	input_thread.detach();
+
+	//recieve messages
+	while (running)
+	{
+		char static_buffer[1028];
+		while (connected)
+		{
+			std::size_t recieved;
+			sf::Socket::Status status = socket->receive(static_buffer, 1028, recieved);
+
+			if (status == sf::Socket::Status::Disconnected)
+			{
+				connected = false;
+				std::cout << "clean disconnection" << std::endl;
+				socket->disconnect();
+				break;
+			}
+			else
+			{
+				//treat all data as string and append null terminator
+				if (recieved < 1028) static_buffer[recieved] = '\0';
+				std::cout << static_buffer << std::endl;
+			}
+		}
+	}
+}
+
