@@ -15,6 +15,11 @@ void Server::init()
 
 void Server::run()
 {
+
+	running = true;
+	std::thread input_thread([&] {input();});
+	input_thread.detach();
+
 	while (running)
 	{
 		//Add new connection to the connections vector
@@ -46,4 +51,31 @@ void Server::input()
 			connection->send(reinterpret_cast<char*>(str.data()), str.length());
 		}
 	}
+}
+
+void Server::listen(sf::TcpSocket& c_socket)
+{
+	//keep socket active until connection is no longer valid
+	bool continue_receiving = true;
+
+	char data[1028];
+	std::size_t received;
+
+	while (continue_receiving)
+	{
+		sf::Socket::Status status = c_socket.receive(data, 1028, received);
+
+		if (status == sf::Socket::Status::Disconnected)
+		{
+			continue_receiving = false;
+			std::cout << "Disconnected" << std::endl;
+		}
+
+		if (received < 1028) { data[received] = '\0'; }
+		relay(data, c_socket);
+
+		std::cout << reinterpret_cast<char*>(data) << std::endl;
+	}
+
+	c_socket.disconnect();
 }

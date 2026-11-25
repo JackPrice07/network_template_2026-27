@@ -11,7 +11,7 @@ void Client::connect()
 		std::cout << "You're connected!" << std::endl;
 		connected = true;
 	}
-	else;
+	else
 	{
 		std::cout << "failed to connect to 127.0.0.1::53000" << std::endl;
 	}
