@@ -58,7 +58,7 @@ void Game::mouseButtonPressed(const sf::Event::MouseButtonPressed* event)
         if (hostText.getGlobalBounds().contains(sf::Vector2f(event->position)))
         {
             current_state = GAME;
-            std::cout << " Creating Server" << std::endl;
+            std::cout << "Creating Server" << std::endl;
             server = std::make_unique<Server>();
             server->init();
             server->run();
@@ -69,6 +69,7 @@ void Game::mouseButtonPressed(const sf::Event::MouseButtonPressed* event)
             std::cout << "Attempting to connect to Server" << std::endl;
             client = std::make_unique<Client>();
             client->connect();
+            client->run();
         }
     }
 

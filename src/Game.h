@@ -35,7 +35,7 @@ class Game
 		 MENU,
 		 GAME
 	 };
-	 GameState current_state;
+	GameState current_state;
 	sf::RenderWindow& window;
 	std::shared_ptr<Board> board;
 };

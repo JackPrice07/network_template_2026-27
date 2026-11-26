@@ -34,7 +34,11 @@ void Server::run()
 			continue;
 		}
 		std::cout << "Client connected @ " << c_sock.getRemotePort() << std::endl;
+
+		
 	}
+
+		
 }
 
 void Server::input()
@@ -52,6 +56,10 @@ void Server::input()
 		}
 	}
 }
+
+
+
+
 
 void Server::listen(sf::TcpSocket& c_socket)
 {
@@ -79,3 +87,22 @@ void Server::listen(sf::TcpSocket& c_socket)
 
 	c_socket.disconnect();
 }
+
+void Server::relay(std::string buffer, sf::TcpSocket& c_socket)
+{
+	char* message = reinterpret_cast<char*>(buffer.data());
+
+	std::lock_guard<std::mutex> lck(mutex);
+
+	for (std::unique_ptr<sf::TcpSocket>& connection : connections)
+	{
+		if (connection->getRemotePort() != c_socket.getRemotePort())
+		{
+			connection->send(message, buffer.size());
+		}
+	}
+}
+
+
+
+
